@@ -1,0 +1,81 @@
+sudo apt update
+sudo apt full-upgrade
+sudo apt install build-essential tcl
+
+
+curl -O http://download.redis.io/redis-stable.tar.gz
+
+tar xzvf redis-stable.tar.gz
+
+cd redis-stable
+
+make
+make test
+sudo make install
+
+
+sudo mkdir /etc/redis
+
+
+sudo cp redis.conf /etc/redis
+sudo nano /etc/redis/redis.conf 
+
+
+supervised no ---> supervised systemd
+dir ./  ---> dir /var/lib/redis
+
+
+sudo nano /etc/systemd/system/redis.service
+
+add text:
+=====================
+[Unit]
+Description=Redis In-Memory Data Store
+After=network.target
+
+[Service]
+User=redis
+Group=redis
+ExecStart=/usr/local/bin/redis-server /etc/redis/redis.conf
+ExecStop=/usr/local/bin/redis-cli shutdown
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+
+==============
+
+sudo adduser --system --group --no-create-home redis   
+sudo mkdir /var/lib/redis   
+sudo chown redis:redis /var/lib/redis  
+sudo chmod 770 /var/lib/redis  
+
+
+sudo systemctl start redis
+
+systemctl status redis
+
+sudo systemctl restart redis
+sudo systemctl stop redis
+
+
+Вставить конфиг в common/config/main-local.php
+ 'cache' => [
+            'class' => 'yii\redis\Cache',
+        ],
+        'redis' => [
+            'class' => 'yii\redis\Connection',
+            'hostname' => 'localhost',
+            'port' => 6379,
+            'database' => 0,
+        ],
+
+
+
+
+Установка библеотеки Redis для yii2:
+composer require --prefer-dist yiisoft/yii2-redis
+
+Если композер попросит токен, перейти по этой ссылке и на гитхабе сгенерировать его и вставить в консоль
+https://github.com/settings/tokens/new?scopes=repo&description=Composer
