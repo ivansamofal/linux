@@ -1,0 +1,20 @@
+sudo apt-get install git
+#Go to needle directory!
+
+git init 
+git add .
+git commit -m 'comment to commit'
+git remote add origin https://github.com/ivansamofal/test.git
+
+git status
+
+git config --global user.name "Ivan"
+git config --global user.email "ivansamofal@gmail.com"
+
+
+git config --global push.default simple
+git push
+
+git checkout 
+git branch
+git stash
